@@ -30,8 +30,10 @@ instance Arbitrary BlockVersionModifier where
 
 instance Arbitrary SystemTag where
     arbitrary =
-        oneof $
-        map (pure . fromMaybe onFail) [mkSystemTag "win64", mkSystemTag "mac32"]
+        oneof .
+        map (pure . fromMaybe onFail) $
+          [mkSystemTag (os <> "_" <> arch)
+          | os <- ["linux", "osx", "mingw32"], arch <- ["x86_64", "i386"]]
       where
         onFail = error "instance Arbitrary SystemTag: disaster"
     shrink = genericShrink

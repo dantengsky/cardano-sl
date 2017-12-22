@@ -32,9 +32,10 @@ import           Pos.Core.Types          (SoftwareVersion (..))
 import           Pos.Crypto              (Hash, castHash, hash)
 import           Pos.DB.Misc             (isUpdateInstalled)
 import           Pos.Exception           (reportFatalError)
-import           Pos.Update.Configuration (curSoftwareVersion, ourSystemTag)
+import           Pos.Update.Configuration (curSoftwareVersion)
 import           Pos.Update.Context      (UpdateContext (..))
-import           Pos.Update.Core.Types   (UpdateData (..), UpdateProposal (..))
+import           Pos.Update.Core.Types   (UpdateData (..), UpdateProposal (..),
+                                          currentSystemTag)
 import           Pos.Update.Mode         (UpdateMode)
 import           Pos.Update.Params       (UpdateParams (..))
 import           Pos.Update.Poll.Types   (ConfirmedProposalState (..))
@@ -96,7 +97,7 @@ getUpdateHash ConfirmedProposalState{..} = do
     useInstaller <- views (lensOf @UpdateParams) upUpdateWithPkg
     let dataHash = if useInstaller then udPkgHash else udAppDiffHash
         mupdHash = dataHash <$>
-                   HM.lookup ourSystemTag (upData cpsUpdateProposal)
+                   HM.lookup currentSystemTag (upData cpsUpdateProposal)
 
     -- It must be enforced by the caller.
     maybe (reportFatalError $ sformat

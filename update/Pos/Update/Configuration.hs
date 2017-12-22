@@ -9,7 +9,6 @@ module Pos.Update.Configuration
        , ourAppName
        , lastKnownBlockVersion
        , curSoftwareVersion
-       , ourSystemTag
        ) where
 
 import           Universum
@@ -23,7 +22,6 @@ import           Pos.Aeson.Core             ()
 import           Pos.Aeson.Update           ()
 import           Pos.Core                   (ApplicationName, BlockVersion (..),
                                              SoftwareVersion (..))
-import           Pos.Update.Core            (SystemTag)
 
 ----------------------------------------------------------------------------
 -- Config itself
@@ -45,8 +43,6 @@ data UpdateConfiguration = UpdateConfiguration
     , ccLastKnownBlockVersion :: !BlockVersion
       -- | Application version
     , ccApplicationVersion    :: !Word32
-      -- | System tag.
-    , ccSystemTag             :: !SystemTag
     }
     deriving (Show, Generic)
 
@@ -68,6 +64,3 @@ lastKnownBlockVersion = ccLastKnownBlockVersion updateConfiguration
 -- | Version of application (code running)
 curSoftwareVersion :: HasUpdateConfiguration => SoftwareVersion
 curSoftwareVersion = SoftwareVersion ourAppName (ccApplicationVersion updateConfiguration)
-
-ourSystemTag :: HasUpdateConfiguration => SystemTag
-ourSystemTag = ccSystemTag updateConfiguration

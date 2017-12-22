@@ -63,12 +63,11 @@ import           Pos.DB.Error                 (DBError (DBMalformed))
 import           Pos.DB.GState.Common         (gsGetBi, writeBatchGState)
 import           Pos.Slotting.Types           (EpochSlottingData (..), SlottingData,
                                                createInitSlottingData)
-import           Pos.Update.Configuration     (HasUpdateConfiguration, ourAppName,
-                                               ourSystemTag)
+import           Pos.Update.Configuration     (HasUpdateConfiguration, ourAppName)
 import           Pos.Update.Constants         (genesisBlockVersion,
                                                genesisSoftwareVersions)
 import           Pos.Update.Core              (BlockVersionData (..), UpId,
-                                               UpdateProposal (..))
+                                               UpdateProposal (..), currentSystemTag)
 import           Pos.Update.Poll.Types        (BlockVersionState (..),
                                                ConfirmedProposalState (..),
                                                DecidedProposalState (dpsDifficulty),
@@ -277,7 +276,7 @@ getConfirmedProposals reqNsv =
             Just cps
         | otherwise = Nothing
     hasOurSystemTag ConfirmedProposalState {..} =
-        isJust $ upData cpsUpdateProposal ^. at ourSystemTag
+        isJust $ upData cpsUpdateProposal ^. at currentSystemTag
 
 -- Iterator by block versions
 data BVIter

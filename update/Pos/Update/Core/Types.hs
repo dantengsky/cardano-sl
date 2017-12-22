@@ -13,6 +13,7 @@ module Pos.Update.Core.Types
        , UpdateProposalToSign (..)
        , BlockVersionData (..)
        , SystemTag (getSystemTag)
+       , currentSystemTag
        , mkUpdateProposal
        , mkUpdateProposalWSign
        , mkSystemTag
@@ -57,9 +58,11 @@ import           Data.Time.Units            (Millisecond)
 import           Formatting                 (Format, bprint, build, builder, int, later,
                                              (%))
 import           Instances.TH.Lift          ()
+import           Language.Haskell.TH        (runQ)
 import           Language.Haskell.TH.Syntax (Lift)
 import           Serokell.Data.Memory.Units (Byte, memory)
 import           Serokell.Util.Text         (listJson)
+import           System.Info                (os, arch)
 
 import           Pos.Binary.Class           (Bi, Raw)
 import           Pos.Binary.Crypto          ()
@@ -141,7 +144,7 @@ newtype SystemTag = SystemTag { getSystemTag :: Text }
   deriving (Eq, Ord, Show, Generic, Buildable, Hashable, Lift, Typeable)
 
 systemTagMaxLength :: Integral i => i
-systemTagMaxLength = 10
+systemTagMaxLength = 15
 
 mkSystemTag :: MonadFail m => Text -> m SystemTag
 mkSystemTag tag | T.length tag > systemTagMaxLength
@@ -150,6 +153,9 @@ mkSystemTag tag | T.length tag > systemTagMaxLength
                     = fail "SystemTag: not ascii string passed"
                 | otherwise
                     = pure $ SystemTag tag
+
+currentSystemTag :: SystemTag
+currentSystemTag = $(runQ [| SystemTag (T.pack (os ++ "_" ++ arch)) |])
 
 -- | ID of software update proposal
 type UpId = Hash UpdateProposal
